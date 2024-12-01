@@ -1,0 +1,18 @@
+# node_modules folder
+node_modules/
+
+# Logs
+*.log
+
+# NPM package lock files
+package-lock.json
+
+# Yarn lock file
+yarn.lock
+
+# Environment files
+.env
+
+# IDE folders
+.vscode/
+.idea/
