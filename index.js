@@ -1,10 +1,9 @@
 import app from "./app.js";
-import { sequelize } from "./src/database/database.js";
-import "./app.js";
+import syncDatabase from "./src/database/sync.js";
 
 async function main() {
   try {
-    await sequelize.sync();
+    await syncDatabase();
     console.log("Connection has been established successfully");
     app.listen(3000);
     console.log("Server On port", 3000);
