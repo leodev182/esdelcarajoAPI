@@ -1,10 +1,10 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database.js";
 
-export const User = sequelize.define(
+const User = sequelize.define(
   "User",
   {
-    Id: {
+    id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
@@ -19,8 +19,8 @@ export const User = sequelize.define(
     },
     email: {
       type: DataTypes.STRING,
-      unique: true,
       allowNull: false,
+      unique: true,
     },
     password: {
       type: DataTypes.STRING,
@@ -29,18 +29,22 @@ export const User = sequelize.define(
     nickname: {
       type: DataTypes.STRING,
       unique: true,
+      allowNull: true, // No es obligatorio
     },
     role: {
       type: DataTypes.STRING,
-      defaultValue: "client",
+      allowNull: true, // Puede ser nulo si no se especifica
     },
+    // El campo `status` tiene un valor por defecto de `true`
     status: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
   },
   {
-    tableName: "users",
     timestamps: true,
+    tableName: "users",
   }
 );
+
+export default User;
