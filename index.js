@@ -1,5 +1,7 @@
 import app from "./app.js";
 import syncDatabase from "./src/database/sync.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 async function main() {
   try {
