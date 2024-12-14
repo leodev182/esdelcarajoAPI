@@ -7,6 +7,7 @@ const router = express.Router();
 
 // Ruta para registrar un usuario
 router.post("/register", hashPasswordMiddleware, authController.createUser);
+router.post("/login", authController.login);
 
 // Ruta para iniciar sesión (login) de un usuario
 // router.post("/login", loginUser);
