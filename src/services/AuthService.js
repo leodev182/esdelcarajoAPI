@@ -27,7 +27,7 @@ class AuthService {
       userId: user.id,
       email: user.email,
       role: user.role,
-      nickname: user.nickname, // Asegúrate de que 'nickname' existe en el modelo User
+      nickname: user.nickname,
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET, {

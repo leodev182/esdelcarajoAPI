@@ -9,7 +9,4 @@ const router = express.Router();
 router.post("/register", hashPasswordMiddleware, authController.createUser);
 router.post("/login", authController.login);
 
-// Ruta para iniciar sesión (login) de un usuario
-// router.post("/login", loginUser);
-
 export default router;

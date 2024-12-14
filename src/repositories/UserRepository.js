@@ -1,8 +1,13 @@
-import User from "../models/User.js";
-
 class UserRepository {
+  constructor(UserModel) {
+    this.UserModel = UserModel;
+  }
   async getUserByEmail(email) {
-    return await User.findOne({ where: { email } });
+    try {
+      return await this.UserModel.findOne({ where: { email } });
+    } catch (error) {
+      throw new Error("Error al obtener el usuario");
+    }
   }
 }
 

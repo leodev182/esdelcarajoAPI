@@ -3,22 +3,26 @@ import AdminService from "../services/AdminService.js";
 import User from "../models/User.js";
 import AuthService from "../services/AuthService.js";
 import UserRepository from "../repositories/UserRepository.js";
+import UserCreationRepository from "../repositories/UserCreationRepository.js";
 
 const createUser = async (req, res) => {
   try {
     const userPackage = await UserDataProcessor.processUserData(req.body);
 
     // Contar administradores en el controlador o en un servicio que puede interactuar con la DB
-    const adminCount = await User.count({ where: { role: "admin" } });
+    const userCreationRepository = new UserCreationRepository(User);
+    const adminCount = await userCreationRepository.countAdmins();
 
     // Llamada al servicio AdminService para asignar el rol
     const userWithRole = AdminService.assignRole(userPackage, adminCount);
 
-    const newUser = await User.create(userWithRole);
+    const newUser = await userCreationRepository.createUser(userWithRole);
 
     res
       .status(201)
-      .send(`Usuario creado con éxito, bienvenid@ ${newUser.name} `);
+      .send(
+        `Usuario creado con éxito, bienvenid@ a tu tienda Del Carajo! ${newUser.name} `
+      );
   } catch (error) {
     console.error(
       `Response on createUser function authController , type: ${error}`
@@ -30,8 +34,11 @@ const createUser = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const userRepository = new UserRepository();
+    //Inyeccion de dependencias
+    const userRepository = new UserRepository(User);
+    //Inyeccion del repositorio al servicio
     const authService = new AuthService(userRepository);
+    //Validacion de usuario
     const dataUser = await authService.validateUser(email, password);
     const token = await authService.generateToken(dataUser);
 
@@ -46,7 +53,7 @@ const login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(`Response on login function authController , type: ${error}`);
+    console.error(`Error en la función loginController: ${error.message}`);
 
     res.status(401).json({ error: error.message || "Error al iniciar sesión" });
   }
