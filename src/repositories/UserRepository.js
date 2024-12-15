@@ -30,6 +30,15 @@ class UserRepository {
       );
     }
   }
+  async updateUserResetPassword(user, token, expiration) {
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = expiration;
+    return await user.save();
+  }
+
+  async saveUser(user) {
+    return await user.save();
+  }
 }
 
 export default UserRepository;

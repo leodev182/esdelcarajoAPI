@@ -117,13 +117,17 @@ const forgotPassword = async (req, res) => {
 
 const resetPassword = async (req, res) => {
   try {
-    const { token, newPassword } = req.body;
+    const { token } = req.query;
+    const { password } = req.body;
+    if (!token) {
+      return res.status(400).json({ message: "Token no proporcionado" });
+    }
 
     const userRepository = new UserRepository(User);
     const passwordResetService = new PasswordResetService(userRepository);
 
     // Llamamos al servicio para restablecer la contraseña
-    await passwordResetService.resetPassword(token, newPassword);
+    await passwordResetService.resetPassword(token, password);
 
     return res
       .status(200)

@@ -39,7 +39,7 @@ class PasswordResetService {
       from: EMAIL,
       to: email,
       subject: "Solicitud de Restablecimiento de Contraseña",
-      text: `Hola ${user.name},\n\nHas solicitado restablecer tu contraseña. Usa el siguiente enlace para hacerlo:\n\nhttp://esdelcarajo.com/reset-password?token=${resetToken}\n\nSi no solicitaste este restablecimiento, ignora este mensaje.\n\nSaludos.`,
+      text: `Hola ${user.name},\n\nHas solicitado restablecer tu contraseña. Usa el siguiente enlace para hacerlo:\n\nhttp://esdelcarajo.com/v1/reset-password?token=${resetToken}\n\nSi no solicitaste este restablecimiento, ignora este mensaje.\n\nSaludos.`,
     };
 
     try {
