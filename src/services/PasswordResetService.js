@@ -3,8 +3,9 @@ import nodemailer from "nodemailer";
 import { EMAIL, PASSWORD_EMAIL } from "../../config/config.js";
 
 class PasswordResetService {
-  constructor(userRepository) {
+  constructor(userRepository, PasswordRepository) {
     this.userRepository = userRepository;
+    this.passwordRepository = PasswordRepository;
   }
 
   async sendResetEmail(email) {
@@ -19,7 +20,7 @@ class PasswordResetService {
 
     const resetTokenExpires = Date.now() + 3600000;
 
-    await this.userRepository.updateUserResetPassword(
+    await this.passwordRepository.updateUserResetPassword(
       user,
       resetToken,
       resetTokenExpires
@@ -53,7 +54,7 @@ class PasswordResetService {
 
   async resetPassword(token, newPassword) {
     // Buscamos el usuario con el token de restablecimiento
-    const user = await this.userRepository.getUserByResetToken(token);
+    const user = await this.passwordRepository.getUserByResetToken(token);
     if (!user) {
       throw new Error("Token inválido o expirado");
     }

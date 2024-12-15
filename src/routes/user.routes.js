@@ -1,13 +1,11 @@
 import express from "express";
-// import {
-//   getUserProfile,
-//   getUserProfileById,
-//   deleteUserById,
-// } from "../controllers/userController.js";
+import userController from "../controllers/userController.js";
 // import { authenticateToken } from "../middlewares/authenticateToken.js";
 // import { adminMiddleware } from "../middlewares/adminMiddleware.js";
 
 const router = express.Router();
+
+router.get("/users", userController.getAllUsers);
 
 // Ruta para obtener el perfil del usuario (solo accesible si está autenticado)
 // router.get("/profile", authenticateToken, getUserProfile);

@@ -1,10 +1,11 @@
-import UserDataProcessor from "../services/UserDataProcessor.js";
-import AdminService from "../services/AdminService.js";
 import User from "../models/User.js";
+import AdminService from "../services/AdminService.js";
 import AuthService from "../services/AuthService.js";
+import PasswordResetService from "../services/PasswordResetService.js";
+import UserDataProcessor from "../services/UserDataProcessor.js";
 import UserRepository from "../repositories/UserRepository.js";
 import UserCreationRepository from "../repositories/UserCreationRepository.js";
-import PasswordResetService from "../services/PasswordResetService.js";
+import PasswordRepository from "../repositories/PasswordRepository.js";
 
 const createUser = async (req, res) => {
   try {
@@ -39,8 +40,9 @@ const login = async (req, res) => {
     const { email, password } = req.body;
     //Inyeccion de dependencias
     const userRepository = new UserRepository(User);
+    const passwordRepository = new PasswordRepository(User);
     //Inyeccion del repositorio al servicio
-    const authService = new AuthService(userRepository);
+    const authService = new AuthService(userRepository, passwordRepository);
     //Validacion de usuario
     const dataUser = await authService.validateUser(email, password);
     const token = await authService.generateToken(dataUser);
@@ -99,7 +101,11 @@ const forgotPassword = async (req, res) => {
     const { email } = req.body;
 
     const userRepository = new UserRepository(User);
-    const passwordResetService = new PasswordResetService(userRepository);
+    const passwordRepository = new PasswordRepository(User);
+    const passwordResetService = new PasswordResetService(
+      userRepository,
+      passwordRepository
+    );
 
     await passwordResetService.sendResetEmail(email);
 
@@ -124,7 +130,11 @@ const resetPassword = async (req, res) => {
     }
 
     const userRepository = new UserRepository(User);
-    const passwordResetService = new PasswordResetService(userRepository);
+    const passwordRepository = new PasswordRepository(User);
+    const passwordResetService = new PasswordResetService(
+      userRepository,
+      passwordRepository
+    );
 
     // Llamamos al servicio para restablecer la contraseña
     await passwordResetService.resetPassword(token, password);

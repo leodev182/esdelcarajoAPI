@@ -19,25 +19,17 @@ class UserRepository {
     }
   }
 
-  async getUserByResetToken(token) {
-    try {
-      return await this.UserModel.findOne({
-        where: { resetPasswordToken: token },
-      });
-    } catch (error) {
-      throw new Error(
-        "Error al obtener el usuario por token de restablecimiento"
-      );
-    }
-  }
-  async updateUserResetPassword(user, token, expiration) {
-    user.resetPasswordToken = token;
-    user.resetPasswordExpires = expiration;
+  async saveUser(user) {
     return await user.save();
   }
 
-  async saveUser(user) {
-    return await user.save();
+  async getAllUsers() {
+    try {
+      const users = await this.UserModel.findAll();
+      return users;
+    } catch (error) {
+      throw new Error("Error al obtener los usuarios desde la base de datos");
+    }
   }
 }
 
