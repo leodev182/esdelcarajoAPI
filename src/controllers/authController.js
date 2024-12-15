@@ -4,6 +4,7 @@ import User from "../models/User.js";
 import AuthService from "../services/AuthService.js";
 import UserRepository from "../repositories/UserRepository.js";
 import UserCreationRepository from "../repositories/UserCreationRepository.js";
+import PasswordResetService from "../services/PasswordResetService.js";
 
 const createUser = async (req, res) => {
   try {
@@ -18,7 +19,7 @@ const createUser = async (req, res) => {
 
     const newUser = await userCreationRepository.createUser(userWithRole);
 
-    res
+    return res
       .status(201)
       .send(
         `Usuario creado con éxito, bienvenid@ a tu tienda Del Carajo! ${newUser.name} `
@@ -27,7 +28,9 @@ const createUser = async (req, res) => {
     console.error(
       `Response on createUser function authController , type: ${error}`
     );
-    res.status(500).json({ error: "An error occurred while creating the use" });
+    return res
+      .status(500)
+      .json({ error: "An error occurred while creating the use" });
   }
 };
 
@@ -42,7 +45,7 @@ const login = async (req, res) => {
     const dataUser = await authService.validateUser(email, password);
     const token = await authService.generateToken(dataUser);
 
-    res.status(200).json({
+    return res.status(200).json({
       message: `Hola ${dataUser.nickname}, que bueno verte por acá`,
       token: token,
       user: {
@@ -55,16 +58,70 @@ const login = async (req, res) => {
   } catch (error) {
     console.error(`Error en la función loginController: ${error.message}`);
 
-    res.status(401).json({ error: error.message || "Error al iniciar sesión" });
+    return res
+      .status(401)
+      .json({ error: error.message || "Error al iniciar sesión" });
   }
 };
 
-const refreshToken = async (req, res) => {};
+const refreshToken = async (req, res) => {
+  try {
+    const newAccessToken = res.locals.newAccessToken;
+    if (!newAccessToken) {
+      return res.status(500).json({ error: "Failed to refresh token" });
+    }
+    return res.status(200).json({
+      message: "Access token refreshed successfully",
+      newAccessToken: newAccessToken,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: "Error refreshing token" });
+  }
+};
 
-const logOut = async (req, res) => {};
+const logout = async (req, res) => {
+  try {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+    });
 
-const forgotPassword = async (req, res) => {};
+    return res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    console.error(`Error en logout: ${error.message}`);
+    return res.status(500).json({ error: "An error occurred during logout" });
+  }
+};
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const userRepository = new UserRepository(User);
+    const passwordResetService = new PasswordResetService(userRepository);
+
+    await passwordResetService.sendResetEmail(email);
+
+    return res.status(200).json({
+      message:
+        "Si el correo es válido, se ha enviado un enlace de restablecimiento.",
+    });
+  } catch (error) {
+    console.error(`Error en el forgotPassword: ${error.message}`);
+    return res
+      .status(500)
+      .json({ erros: "Hubo un error al procesar la soilicitud" });
+  }
+};
 
 const resetPassword = async (req, res) => {};
 
-export default { createUser, login };
+export default {
+  createUser,
+  login,
+  refreshToken,
+  logout,
+  forgotPassword,
+  resetPassword,
+};

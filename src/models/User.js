@@ -1,3 +1,5 @@
+// User.js
+
 import { DataTypes } from "sequelize";
 import { sequelize } from "../database/database.js";
 
@@ -29,16 +31,25 @@ const User = sequelize.define(
     nickname: {
       type: DataTypes.STRING,
       unique: true,
-      allowNull: true, // No es obligatorio
+      allowNull: true,
     },
     role: {
       type: DataTypes.STRING,
-      allowNull: true, // Puede ser nulo si no se especifica
+      allowNull: true,
     },
-    // El campo `status` tiene un valor por defecto de `true`
+
     status: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,
+    },
+
+    resetPasswordToken: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    resetPasswordExpires: {
+      type: DataTypes.DATE,
+      allowNull: true,
     },
   },
   {

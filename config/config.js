@@ -9,7 +9,9 @@ if (
   !process.env.DB_HOST ||
   !process.env.DB_DIALECT ||
   !process.env.JWT_SECRET ||
-  !process.env.JWT_EXPIRATION
+  !process.env.JWT_EXPIRATION ||
+  !process.env.EMAIL ||
+  !process.env.PASSWORD_EMAIL
 ) {
   throw new Error(
     "Faltan algunas variables de entorno necesarias en el archivo .env"
@@ -25,3 +27,6 @@ export const DB_DIALECT = process.env.DB_DIALECT;
 export const JWT_SECRET = process.env.JWT_SECRET;
 
 export const JWT_EXPIRATION = process.env.JWT_EXPIRATION;
+
+export const EMAIL = process.env.EMAIL;
+export const PASSWORD_EMAIL = process.env.PASSWORD_EMAIL;
