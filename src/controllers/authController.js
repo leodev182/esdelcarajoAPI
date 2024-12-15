@@ -115,7 +115,26 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-const resetPassword = async (req, res) => {};
+const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    const userRepository = new UserRepository(User);
+    const passwordResetService = new PasswordResetService(userRepository);
+
+    // Llamamos al servicio para restablecer la contraseña
+    await passwordResetService.resetPassword(token, newPassword);
+
+    return res
+      .status(200)
+      .json({ message: "Contraseña actualizada con éxito" });
+  } catch (error) {
+    console.error(`Error en la función resetPassword: ${error.message}`);
+    return res
+      .status(500)
+      .json({ error: "Hubo un error al restablecer la contraseña" });
+  }
+};
 
 export default {
   createUser,

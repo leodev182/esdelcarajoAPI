@@ -17,7 +17,7 @@ class PasswordResetService {
     // Generamos un token de restablecimiento
     const resetToken = crypto.randomBytes(20).toString("hex");
 
-    const resetTokenExpires = new Date.now() + 3600000;
+    const resetTokenExpires = Date.now() + 3600000;
 
     await this.userRepository.updateUserResetPassword(
       user,
@@ -39,7 +39,7 @@ class PasswordResetService {
       from: EMAIL,
       to: email,
       subject: "Solicitud de Restablecimiento de Contraseña",
-      text: `Hola ${user.name},\n\nHas solicitado restablecer tu contraseña. Usa el siguiente enlace para hacerlo:\n\nhttp://tusitio.com/reset-password?token=${resetToken}\n\nSi no solicitaste este restablecimiento, ignora este mensaje.\n\nSaludos.`,
+      text: `Hola ${user.name},\n\nHas solicitado restablecer tu contraseña. Usa el siguiente enlace para hacerlo:\n\nhttp://esdelcarajo.com/reset-password?token=${resetToken}\n\nSi no solicitaste este restablecimiento, ignora este mensaje.\n\nSaludos.`,
     };
 
     try {
@@ -49,6 +49,29 @@ class PasswordResetService {
       console.error(`Error al enviar el correo: ${error.message}`);
       throw new Error("Error al enviar el correo de restablecimiento");
     }
+  }
+
+  async resetPassword(token, newPassword) {
+    // Buscamos el usuario con el token de restablecimiento
+    const user = await this.userRepository.getUserByResetToken(token);
+    if (!user) {
+      throw new Error("Token inválido o expirado");
+    }
+
+    // Verificamos si el token ha expirado
+    if (user.resetPasswordExpires < Date.now()) {
+      throw new Error("El token ha expirado");
+    }
+
+    // Limpiamos el token de restablecimiento y la expiración
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+
+    // Actualizamos la contraseña, el middleware de hashing se encargará de encriptarla
+    user.password = newPassword;
+
+    // Guardamos el usuario actualizado
+    await this.userRepository.saveUser(user);
   }
 }
 

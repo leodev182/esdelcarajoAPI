@@ -1,5 +1,5 @@
 import express from "express";
-
+import { body } from "express-validator";
 import authController from "../controllers/authController.js";
 import hashPasswordMiddleware from "../middlewares/hashPasswordMiddleware.js";
 import refreshTokenMiddleware from "../middlewares/refreshTokenMiddleware.js";
@@ -18,5 +18,13 @@ router.post(
 router.post("/logout", authController.logout);
 
 router.post("/forgot-password", authController.forgotPassword);
+router.put(
+  "/reset-password",
+  body("newPassword")
+    .notEmpty()
+    .withMessage("La nueva contraseña es obligatoria"),
+  hashPasswordMiddleware,
+  authController.resetPassword
+);
 
 export default router;
